@@ -133,9 +133,45 @@ tree * search (int val){
     return temp;
 }
 
+void transplant(tree *u, tree *v){
+    if (u->parent == NULL)
+        root = v;
+    else if (u == u->parent->left)
+        u->parent->left = v;
+    else
+        u->parent->right = v;
+    if (v != NULL)
+        v->parent = u->parent;
+    return;
+}
+
+void delete (tree * node){
+    if (node == NULL)
+        return;
+    if (node->left == NULL)
+        transplant(node, node->right);
+    else if (node->right == NULL)
+        transplant(node, node->left);
+    else{
+        tree * temp = search(node->data);
+        tree * suc = successor(node);
+        if (suc->parent != node){
+            transplant(suc, suc->right);
+            suc->right = node->right;
+            suc->right->parent = suc;
+        }
+        transplant(node, suc);
+        suc->left = node->left;
+        suc->left->parent = suc;
+    }
+    free(node);
+    return;
+}
+
 int main(){
     int flag;
-    printf("0)Exit 1)Insert 2)Inorder 3)Preorder 4)Postorder 5)Search 6)Successor 7)Predecessor\n");
+    int val;
+    printf("0)Exit 1)Insert 2)Inorder 3)Preorder 4)Postorder 5)Search 6)Successor 7)Predecessor 8)Delete\n");
     scanf("%d", &flag);
     while (flag!=0){
         if (flag==1){
@@ -155,7 +191,6 @@ int main(){
         }
         else if (flag == 5){
             printf("What to search? ");
-            int val;
             scanf("%d", &val);
             tree *node = search(val);
             if (node == NULL){
@@ -167,7 +202,6 @@ int main(){
         }
         else if (flag==6){
             printf("Whose successor? ");
-            int val;
             scanf ("%d", &val);
             tree * node = search(val);
             tree * suc = successor(node);
@@ -177,7 +211,6 @@ int main(){
         }
         else if (flag==7){
             printf("Whose predecessor? ");
-            int val;
             scanf("%d", &val);
             tree * node = search(val);
             tree * pre = predecessor(node);
@@ -185,7 +218,13 @@ int main(){
                 printf("Predecessor: %d\n", pre->data);
             }
         }
-        printf("0)Exit 1)Insert 2)Inorder 3)Preorder 4)Postorder 5)Search 6)Successor 7)Predecessor\n");
+        else if (flag==8){
+            printf("Value to be deleted: ");
+            scanf ("%d", &val); 
+            tree * node = search(val);
+            delete (node);
+        }
+        printf("0)Exit 1)Insert 2)Inorder 3)Preorder 4)Postorder 5)Search 6)Successor 7)Predecessor 8)Delete\n");
         scanf("%d", &flag);
     }
 }
