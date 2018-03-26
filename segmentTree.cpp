@@ -27,16 +27,44 @@ int getSum(int left, int right, int start, int end, int index){
     }
 }
 
+void update(int start, int end, int ind, int diff, int seg_ind){
+    if ((ind < start) || (ind > end))
+        return;
+    segTree[seg_ind] += diff;
+    if (start != end){
+        int mid = start + (end-start)/2;
+        update(start, mid, ind, diff, 2*seg_ind + 1);
+        update(mid + 1, end, ind, diff, 2*seg_ind + 2);
+    }
+}
+
 int main(){
-    scanf("%d", &n);
+    cin >> n;
     for (int i=0; i<n; i++){
-        scanf("%d", &arr[i]);
+        cin >> arr[i];
     }
     int totalSum = buildSegTree(0, n-1, 0);
-    int left, right;
-    cout << "enter left and right index ";
-    cin >> left >> right;
-    int sum = getSum(left, right, 0, n-1, 0);
-    cout << sum << endl;
+    int flag;
+    cout << "0)Exit 1)getSum 2)update\n";
+    cin >> flag;
+    while (flag){
+        if (flag == 1){
+            int left, right;
+            cout << "enter left and right index ";
+            cin >> left >> right;
+            int sum = getSum(left, right, 0, n-1, 0);
+            cout << sum << endl;
+        }
+        else if (flag == 2){
+            cout << "enter update index and value ";
+            int ind, val;
+            cin >> ind >> val;
+            int diff = val - arr[ind];
+            arr[ind] = val;
+            update(0, n-1, ind, diff, 0);
+        }
+        cout << "0)Exit 1)getSum 2)update\n";
+        cin >> flag;
+    }
     return 0;
 }
